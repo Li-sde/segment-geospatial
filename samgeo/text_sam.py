@@ -1,4 +1,4 @@
-"""The LangSAM model for segmenting objects from satellite images using text prompts. 
+"""The LangSAM model for segmenting objects from satellite images using text prompts.
 The source code is adapted from the https://github.com/luca-medeiros/lang-segment-anything repository.
 Credits to Luca Medeiros for the original implementation.
 """
@@ -11,6 +11,7 @@ import torch
 from PIL import Image
 from segment_anything import sam_model_registry
 from segment_anything import SamPredictor
+from huggingface_hub import hf_hub_download
 from .common import *
 
 try:
@@ -29,7 +30,7 @@ try:
     from groundingdino.util.inference import predict
     from groundingdino.util.slconfig import SLConfig
     from groundingdino.util.utils import clean_state_dict
-    from huggingface_hub import hf_hub_download
+
 except ImportError:
     print("Installing GroundingDINO...")
     install_package("groundingdino-py")
@@ -64,11 +65,11 @@ def load_model_hf(
         torch.nn.Module: The loaded model.
     """
 
-    cache_config_file = hf_hub_download(repo_id=repo_id, filename=ckpt_config_filename)
+    cache_config_file = hf_hub_download(repo_id=repo_id, filename=ckpt_config_filename, force_filename=ckpt_config_filename)
     args = SLConfig.fromfile(cache_config_file)
     model = build_model(args)
     model.to(device)
-    cache_file = hf_hub_download(repo_id=repo_id, filename=filename)
+    cache_file = hf_hub_download(repo_id=repo_id, filename=filename, force_filename=filename)
     checkpoint = torch.load(cache_file, map_location="cpu")
     model.load_state_dict(clean_state_dict(checkpoint["model"]), strict=False)
     model.eval()
