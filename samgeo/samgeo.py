@@ -19,7 +19,7 @@ class SamGeo:
     def __init__(
         self,
         model_type="vit_h",
-        checkpoint="sam_vit_h_4b8939.pth",
+        checkpoint="checkpoint_epoch_11.pth",
         automatic=True,
         device=None,
         sam_kwargs=None,
